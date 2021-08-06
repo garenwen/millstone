@@ -87,7 +87,7 @@ func TestPrivateFunc_continueReceivingMessages(t *testing.T) {
 
 func TestPrivateFunc_consume(t *testing.T) {
 
-	server1, err := machinery.NewServer(cnf)
+	server1, err := millstone.NewServer(cnf)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -107,7 +107,7 @@ func TestPrivateFunc_consume(t *testing.T) {
 
 func TestPrivateFunc_consumeOne(t *testing.T) {
 
-	server1, err := machinery.NewServer(cnf)
+	server1, err := millstone.NewServer(cnf)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -143,7 +143,7 @@ func TestPrivateFunc_initializePool(t *testing.T) {
 
 func TestPrivateFunc_startConsuming(t *testing.T) {
 
-	server1, err := machinery.NewServer(cnf)
+	server1, err := millstone.NewServer(cnf)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -197,7 +197,7 @@ func TestPrivateFunc_consumeDeliveries(t *testing.T) {
 	pool := make(chan struct{}, concurrency)
 	errorsChan := make(chan error)
 	deliveries := make(chan *awssqs.ReceiveMessageOutput)
-	server1, err := machinery.NewServer(cnf)
+	server1, err := millstone.NewServer(cnf)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -265,7 +265,7 @@ func TestPrivateFunc_deleteOne(t *testing.T) {
 
 func Test_CustomQueueName(t *testing.T) {
 
-	server1, err := machinery.NewServer(cnf)
+	server1, err := millstone.NewServer(cnf)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -294,7 +294,7 @@ func TestPrivateFunc_consumeWithConcurrency(t *testing.T) {
 	output := make(chan string) // The output channel
 
 	cnf.ResultBackend = "eager"
-	server1, err := machinery.NewServer(cnf)
+	server1, err := millstone.NewServer(cnf)
 	if err != nil {
 		t.Fatal(err)
 	}

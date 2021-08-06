@@ -1,4 +1,4 @@
-package machinery_test
+package millstone_test
 
 import (
 	"testing"
@@ -87,16 +87,16 @@ func TestNewCustomQueueWorker(t *testing.T) {
 	assert.NoError(t, nil)
 }
 
-func getTestServer(t *testing.T) *machinery.Server {
-	server, err := machinery.NewServer(&config.Config{
+func getTestServer(t *testing.T) *millstone.Server {
+	server, err := millstone.NewServer(&config.Config{
 		Broker:        "amqp://guest:guest@localhost:5672/",
-		DefaultQueue:  "machinery_tasks",
+		DefaultQueue:  "millstone_tasks",
 		ResultBackend: "redis://127.0.0.1:6379",
 		Lock:          "redis://127.0.0.1:6379",
 		AMQP: &config.AMQPConfig{
-			Exchange:      "machinery_exchange",
+			Exchange:      "millstone_exchange",
 			ExchangeType:  "direct",
-			BindingKey:    "machinery_task",
+			BindingKey:    "millstone_task",
 			PrefetchCount: 1,
 		},
 	})

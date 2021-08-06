@@ -12,10 +12,10 @@ import (
 
 // opentracing tags
 var (
-	MachineryTag     = opentracing.Tag{Key: string(opentracing_ext.Component), Value: "machinery"}
-	WorkflowGroupTag = opentracing.Tag{Key: "machinery.workflow", Value: "group"}
-	WorkflowChordTag = opentracing.Tag{Key: "machinery.workflow", Value: "chord"}
-	WorkflowChainTag = opentracing.Tag{Key: "machinery.workflow", Value: "chain"}
+	MachineryTag     = opentracing.Tag{Key: string(opentracing_ext.Component), Value: "millstone"}
+	WorkflowGroupTag = opentracing.Tag{Key: "millstone.workflow", Value: "group"}
+	WorkflowChordTag = opentracing.Tag{Key: "millstone.workflow", Value: "chord"}
+	WorkflowChainTag = opentracing.Tag{Key: "millstone.workflow", Value: "chain"}
 )
 
 // StartSpanFromHeaders will extract a span from the signature headers
@@ -25,7 +25,7 @@ func StartSpanFromHeaders(headers tasks.Headers, operationName string) opentraci
 	spanContext, err := opentracing.GlobalTracer().Extract(opentracing.TextMap, headers)
 
 	// Create a new span from the span context if found or start a new trace with the function name.
-	// For clarity add the machinery component tag.
+	// For clarity add the millstone component tag.
 	span := opentracing.StartSpan(
 		operationName,
 		ConsumerOption(spanContext),

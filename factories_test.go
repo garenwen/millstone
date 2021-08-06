@@ -1,4 +1,4 @@
-package machinery_test
+package millstone_test
 
 import (
 	"errors"
@@ -8,7 +8,7 @@ import (
 	"testing"
 	"unsafe"
 
-	machinery "github.com/garenwen/millstone"
+	millstone "github.com/garenwen/millstone"
 	"github.com/garenwen/millstone/config"
 	"github.com/stretchr/testify/assert"
 
@@ -94,16 +94,16 @@ func TestBrokerFactory(t *testing.T) {
 
 	cnf = config.Config{
 		Broker:       "amqp://guest:guest@localhost:5672/",
-		DefaultQueue: "machinery_tasks",
+		DefaultQueue: "millstone_tasks",
 		AMQP: &config.AMQPConfig{
-			Exchange:      "machinery_exchange",
+			Exchange:      "millstone_exchange",
 			ExchangeType:  "direct",
-			BindingKey:    "machinery_task",
+			BindingKey:    "millstone_task",
 			PrefetchCount: 1,
 		},
 	}
 
-	actual, err := machinery.BrokerFactory(&cnf)
+	actual, err := millstone.BrokerFactory(&cnf)
 	if assert.NoError(t, err) {
 		_, isAMQPBroker := actual.(*amqpbroker.Broker)
 		assert.True(
@@ -124,10 +124,10 @@ func TestBrokerFactory(t *testing.T) {
 	// with password
 	cnf = config.Config{
 		Broker:       "redis://password@localhost:6379",
-		DefaultQueue: "machinery_tasks",
+		DefaultQueue: "millstone_tasks",
 	}
 
-	actual, err = machinery.BrokerFactory(&cnf)
+	actual, err = millstone.BrokerFactory(&cnf)
 	if assert.NoError(t, err) {
 		_, isRedisBroker := actual.(*redisbroker.Broker)
 		assert.True(
@@ -146,10 +146,10 @@ func TestBrokerFactory(t *testing.T) {
 	// without password
 	cnf = config.Config{
 		Broker:       "redis://localhost:6379",
-		DefaultQueue: "machinery_tasks",
+		DefaultQueue: "millstone_tasks",
 	}
 
-	actual, err = machinery.BrokerFactory(&cnf)
+	actual, err = millstone.BrokerFactory(&cnf)
 	if assert.NoError(t, err) {
 		_, isRedisBroker := actual.(*redisbroker.Broker)
 		assert.True(
@@ -168,10 +168,10 @@ func TestBrokerFactory(t *testing.T) {
 	// using a socket file
 	cnf = config.Config{
 		Broker:       "redis+socket:///tmp/redis.sock",
-		DefaultQueue: "machinery_tasks",
+		DefaultQueue: "millstone_tasks",
 	}
 
-	actual, err = machinery.BrokerFactory(&cnf)
+	actual, err = millstone.BrokerFactory(&cnf)
 	if assert.NoError(t, err) {
 		_, isRedisBroker := actual.(*redisbroker.Broker)
 		assert.True(
@@ -190,10 +190,10 @@ func TestBrokerFactory(t *testing.T) {
 	// 3) AWS SQS
 	cnf = config.Config{
 		Broker:       "https://sqs.us-east-2.amazonaws.com/123456789012",
-		DefaultQueue: "machinery_tasks",
+		DefaultQueue: "millstone_tasks",
 	}
 
-	actual, err = machinery.BrokerFactory(&cnf)
+	actual, err = millstone.BrokerFactory(&cnf)
 	if assert.NoError(t, err) {
 		_, isAWSSQSBroker := actual.(*sqsbroker.Broker)
 		assert.True(
@@ -207,11 +207,11 @@ func TestBrokerFactory(t *testing.T) {
 	// AWS SQS Invalid SQS Check
 	cnf = config.Config{
 		Broker:       "http://localhost:5672/some-queue",
-		DefaultQueue: "machinery_tasks",
+		DefaultQueue: "millstone_tasks",
 	}
 
 	os.Setenv("DISABLE_STRICT_SQS_CHECK", "yes")
-	actual, err = machinery.BrokerFactory(&cnf)
+	actual, err = millstone.BrokerFactory(&cnf)
 	if assert.NoError(t, err) {
 		_, isAWSSQSBroker := actual.(*sqsbroker.Broker)
 		assert.True(
@@ -253,7 +253,7 @@ func TestBrokerFactoryError(t *testing.T) {
 		Broker: "BOGUS",
 	}
 
-	conn, err := machinery.BrokerFactory(&cnf)
+	conn, err := millstone.BrokerFactory(&cnf)
 	if assert.Error(t, err) {
 		assert.Nil(t, conn)
 		assert.Equal(t, "Factory failed with broker URL: BOGUS", err.Error())
@@ -262,10 +262,10 @@ func TestBrokerFactoryError(t *testing.T) {
 	// AWS SQS Invalid SQS Check
 	cnf = config.Config{
 		Broker:       "http://localhost:5672/some-queue",
-		DefaultQueue: "machinery_tasks",
+		DefaultQueue: "millstone_tasks",
 	}
 
-	conn, err = machinery.BrokerFactory(&cnf)
+	conn, err = millstone.BrokerFactory(&cnf)
 	if assert.Error(t, err) {
 		assert.Nil(t, conn)
 		assert.Equal(t, "Factory failed with broker URL: http://localhost:5672/some-queue", err.Error())
@@ -275,10 +275,10 @@ func TestBrokerFactoryError(t *testing.T) {
 	os.Setenv("DISABLE_STRICT_SQS_CHECK", "yes")
 	cnf = config.Config{
 		Broker:       "localhost:5672/some-queue",
-		DefaultQueue: "machinery_tasks",
+		DefaultQueue: "millstone_tasks",
 	}
 
-	conn, err = machinery.BrokerFactory(&cnf)
+	conn, err = millstone.BrokerFactory(&cnf)
 	if assert.Error(t, err) {
 		assert.Nil(t, conn)
 		assert.Equal(t, "Factory failed with broker URL: localhost:5672/some-queue", err.Error())
@@ -295,7 +295,7 @@ func TestBackendFactory(t *testing.T) {
 
 	cnf = config.Config{ResultBackend: "amqp://guest:guest@localhost:5672/"}
 
-	actual, err := machinery.BackendFactory(&cnf)
+	actual, err := millstone.BackendFactory(&cnf)
 	if assert.NoError(t, err) {
 		expected := amqpbackend.New(&cnf)
 		assert.True(
@@ -311,7 +311,7 @@ func TestBackendFactory(t *testing.T) {
 		ResultBackend: "memcache://10.0.0.1:11211,10.0.0.2:11211",
 	}
 
-	actual, err = machinery.BackendFactory(&cnf)
+	actual, err = millstone.BackendFactory(&cnf)
 	if assert.NoError(t, err) {
 		servers := []string{"10.0.0.1:11211", "10.0.0.2:11211"}
 		expected := memcachebackend.New(&cnf, servers)
@@ -329,7 +329,7 @@ func TestBackendFactory(t *testing.T) {
 		ResultBackend: "redis://password@localhost:6379",
 	}
 
-	actual, err = machinery.BackendFactory(&cnf)
+	actual, err = millstone.BackendFactory(&cnf)
 	if assert.NoError(t, err) {
 		expected := redisbackend.New(&cnf, "localhost:6379", "password", "", 0)
 		assert.True(
@@ -344,7 +344,7 @@ func TestBackendFactory(t *testing.T) {
 		ResultBackend: "redis://localhost:6379",
 	}
 
-	actual, err = machinery.BackendFactory(&cnf)
+	actual, err = millstone.BackendFactory(&cnf)
 	if assert.NoError(t, err) {
 		expected := redisbackend.New(&cnf, "localhost:6379", "", "", 0)
 		assert.True(
@@ -359,7 +359,7 @@ func TestBackendFactory(t *testing.T) {
 		ResultBackend: "redis+socket:///tmp/redis.sock",
 	}
 
-	actual, err = machinery.BackendFactory(&cnf)
+	actual, err = millstone.BackendFactory(&cnf)
 	if assert.NoError(t, err) {
 		expected := redisbackend.New(&cnf, "", "", "/tmp/redis.sock", 0)
 		assert.True(
@@ -375,7 +375,7 @@ func TestBackendFactory(t *testing.T) {
 		ResultsExpireIn: 30,
 	}
 
-	actual, err = machinery.BackendFactory(&cnf)
+	actual, err = millstone.BackendFactory(&cnf)
 	if assert.NoError(t, err) {
 		expected, err := mongobackend.New(&cnf)
 		if assert.NoError(t, err) {
@@ -395,7 +395,7 @@ func TestBackendFactoryError(t *testing.T) {
 		ResultBackend: "BOGUS",
 	}
 
-	conn, err := machinery.BackendFactory(&cnf)
+	conn, err := millstone.BackendFactory(&cnf)
 	if assert.Error(t, err) {
 		assert.Nil(t, conn)
 		assert.Equal(t, "Factory failed with result backend: BOGUS", err.Error())
@@ -414,7 +414,7 @@ func TestParseRedisURL(t *testing.T) {
 		t.Run(tc.desc, func(t *testing.T) {
 			t.Parallel()
 
-			host, pwd, db, err := machinery.ParseRedisURL(tc.url)
+			host, pwd, db, err := millstone.ParseRedisURL(tc.url)
 			if tc.err != nil {
 				assert.Error(t, err, tc.err)
 				return
@@ -439,15 +439,15 @@ func TestParseRedisSocketURL(t *testing.T) {
 	)
 
 	url = "non_redissock:///tmp/redis.sock"
-	_, _, _, err = machinery.ParseRedisSocketURL(url)
+	_, _, _, err = millstone.ParseRedisSocketURL(url)
 	assert.Error(t, err, "invalid redis scheme")
 
 	url = "redis+socket:/"
-	_, _, _, err = machinery.ParseRedisSocketURL(url)
+	_, _, _, err = millstone.ParseRedisSocketURL(url)
 	assert.Error(t, err, "invalid redis url scheme")
 
 	url = "redis+socket:///tmp/redis.sock"
-	path, pwd, db, err = machinery.ParseRedisSocketURL(url)
+	path, pwd, db, err = millstone.ParseRedisSocketURL(url)
 	if assert.NoError(t, err) {
 		assert.Equal(t, "/tmp/redis.sock", path)
 		assert.Equal(t, "", pwd)
@@ -455,7 +455,7 @@ func TestParseRedisSocketURL(t *testing.T) {
 	}
 
 	url = "redis+socket://pwd@/tmp/redis.sock"
-	path, pwd, db, _ = machinery.ParseRedisSocketURL(url)
+	path, pwd, db, _ = millstone.ParseRedisSocketURL(url)
 	if assert.NoError(t, err) {
 		assert.Equal(t, "/tmp/redis.sock", path)
 		assert.Equal(t, "pwd", pwd)
@@ -463,7 +463,7 @@ func TestParseRedisSocketURL(t *testing.T) {
 	}
 
 	url = "redis+socket://pwd@/tmp/redis.sock:/2"
-	path, pwd, db, err = machinery.ParseRedisSocketURL(url)
+	path, pwd, db, err = millstone.ParseRedisSocketURL(url)
 	if assert.NoError(t, err) {
 		assert.Equal(t, "/tmp/redis.sock", path)
 		assert.Equal(t, "pwd", pwd)

@@ -22,8 +22,8 @@ var (
 func init() {
 	// Initialise a CLI app
 	app = cli.NewApp()
-	app.Name = "machinery"
-	app.Usage = "machinery worker and send example tasks with machinery send"
+	app.Name = "millstone"
+	app.Usage = "millstone worker and send example tasks with millstone send"
 	app.Version = "0.0.0"
 }
 
@@ -32,7 +32,7 @@ func main() {
 	app.Commands = []cli.Command{
 		{
 			Name:  "worker",
-			Usage: "launch machinery worker",
+			Usage: "launch millstone worker",
 			Action: func(c *cli.Context) error {
 				if err := worker(); err != nil {
 					return cli.NewExitError(err.Error(), 1)
@@ -56,9 +56,9 @@ func main() {
 	app.Run(os.Args)
 }
 
-func startServer() (*machinery.Server, error) {
+func startServer() (*millstone.Server, error) {
 	cnf := &config.Config{
-		DefaultQueue:    "machinery_tasks",
+		DefaultQueue:    "millstone_tasks",
 		ResultsExpireIn: 3600,
 		Broker:          "redis://localhost:6379",
 		ResultBackend:   "redis://localhost:6379",
@@ -73,7 +73,7 @@ func startServer() (*machinery.Server, error) {
 		},
 	}
 
-	server, err := machinery.NewServer(cnf)
+	server, err := millstone.NewServer(cnf)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +94,7 @@ func startServer() (*machinery.Server, error) {
 }
 
 func worker() error {
-	consumerTag := "machinery_worker"
+	consumerTag := "millstone_worker"
 
 	server, err := startServer()
 	if err != nil {

@@ -1,4 +1,4 @@
-package machinery
+package millstone
 
 import (
 	"errors"

@@ -288,7 +288,7 @@ func (b *Backend) connect() error {
 	}
 	b.client = client
 
-	database := "machinery"
+	database := "millstone"
 
 	if b.GetConfig().MongoDB != nil {
 		database = b.GetConfig().MongoDB.Database

@@ -1,4 +1,4 @@
-package machinery_test
+package millstone_test
 
 import (
 	"testing"
@@ -12,19 +12,19 @@ func TestRedactURL(t *testing.T) {
 	t.Parallel()
 
 	broker := "amqp://guest:guest@localhost:5672"
-	redactedURL := machinery.RedactURL(broker)
+	redactedURL := millstone.RedactURL(broker)
 	assert.Equal(t, "amqp://localhost:5672", redactedURL)
 }
 
 func TestPreConsumeHandler(t *testing.T) {
 	t.Parallel()
 	
-	worker := &machinery.Worker{}
+	worker := &millstone.Worker{}
 
 	worker.SetPreConsumeHandler(SamplePreConsumeHandler)
 	assert.True(t, worker.PreConsumeHandler())
 }
 
-func SamplePreConsumeHandler(w *machinery.Worker) bool {
+func SamplePreConsumeHandler(w *millstone.Worker) bool {
 	return true
 }

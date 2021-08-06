@@ -21,13 +21,13 @@ var (
 	// Start with sensible default values
 	defaultCnf = &Config{
 		Broker:          "amqp://guest:guest@localhost:5672/",
-		DefaultQueue:    "machinery_tasks",
+		DefaultQueue:    "millstone_tasks",
 		ResultBackend:   "amqp://guest:guest@localhost:5672/",
 		ResultsExpireIn: DefaultResultsExpireIn,
 		AMQP: &AMQPConfig{
-			Exchange:      "machinery_exchange",
+			Exchange:      "millstone_exchange",
 			ExchangeType:  "direct",
-			BindingKey:    "machinery_task",
+			BindingKey:    "millstone_task",
 			PrefetchCount: 3,
 		},
 		DynamoDB: &DynamoDBConfig{
@@ -65,7 +65,7 @@ type Config struct {
 	GCPPubSub               *GCPPubSubConfig `yaml:"-" ignored:"true"`
 	MongoDB                 *MongoDBConfig   `yaml:"-" ignored:"true"`
 	TLSConfig               *tls.Config
-	// NoUnixSignals - when set disables signal handling in machinery
+	// NoUnixSignals - when set disables signal handling in millstone
 	NoUnixSignals bool            `yaml:"no_unix_signals" envconfig:"NO_UNIX_SIGNALS"`
 	DynamoDB      *DynamoDBConfig `yaml:"dynamodb"`
 }

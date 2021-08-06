@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	LockKeyPrefix = "machinery_lock_"
+	LockKeyPrefix = "millstone_lock_"
 )
 
 func GetLockName(name, spec string) string {

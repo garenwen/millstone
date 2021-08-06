@@ -1,4 +1,4 @@
-package machinery
+package millstone
 
 import (
 	"context"
@@ -21,7 +21,7 @@ import (
 	backendsiface "github.com/garenwen/millstone/backends/iface"
 	brokersiface "github.com/garenwen/millstone/brokers/iface"
 	lockiface "github.com/garenwen/millstone/locks/iface"
-	opentracing "github.com/opentracing/opentracing-go"
+	"github.com/opentracing/opentracing-go"
 )
 
 // Server is the main Machinery object and stores all configuration
